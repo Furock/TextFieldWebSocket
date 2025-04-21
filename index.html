@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>FastAPI WebSocket</title>
+</head>
+<body>
+  <h1>Teilen wir Text!</h1>
+  <textarea id="shared" rows="10" cols="50"></textarea>
+
+  <script>
+    const socket = new WebSocket("ws://" + location.host + "/ws");
+    const textarea = document.getElementById("shared");
+    let localChange = false;
+
+    socket.onmessage = (event) => {
+      //localChange um endlos loop zu vermeiden
+      localChange = true;
+      textarea.value = event.data;
+      localChange = false;
+    };
+
+    textarea.addEventListener("input", () => {
+      if (!localChange) {
+        socket.send(textarea.value);
+      }
+    });
+  </script>
+</body>
+</html>
